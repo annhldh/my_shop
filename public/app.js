@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -17,20 +17,43 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Hàm thêm dữ liệu vào Firestore
-async function addProduct(product) {
-  try {
-    const docRef = await addDoc(collection(db, "products"), product);
-    console.log("Product added with ID: ", docRef.id);
-  } catch (e) {
-    console.error("Error adding product: ", e);
-  }
+// Hàm hiển thị các loại sản phẩm từ "product-types"
+async function displayProductTypes() {
+  const querySnapshot = await getDocs(collection(db, "product-types"));
+  const productTable = document.querySelector('.product-table');
+
+  productTable.innerHTML = '<h2>Danh mục</h2>';  // Tiêu đề bảng
+
+  const productRow = document.createElement('div');
+  productRow.className = 'product-row';
+
+  querySnapshot.forEach((doc) => {
+    const productType = doc.data();
+    const productCell = document.createElement('div');
+    productCell.className = 'product-cell';
+
+    productCell.innerHTML = `
+      <img src="${productType.imageUrl}" alt="${productType.name}">
+      <p>${productType.name}</p>
+    `;
+
+    productRow.appendChild(productCell);
+  });
+
+  productTable.appendChild(productRow);
 }
 
-// Hàm lấy và hiển thị dữ liệu từ Firestore
-async function displayProducts() {
-  const querySnapshot = await getDocs(collection(db, "products"));
-  const productTable = document.querySelector('.product-table');
+// Hàm hiển thị sản phẩm từ "product"
+async function displayProducts(searchTerm = '') {
+  const productsRef = collection(db, "product");
+  let q = productsRef;
+
+  if (searchTerm) {
+    q = query(productsRef, where('name', '>=', searchTerm), where('name', '<=', searchTerm + '\uf8ff'));
+  }
+
+  const querySnapshot = await getDocs(q);
+  const productTable = document.getElementById('product-hot');
 
   productTable.innerHTML = '';  // Xóa sản phẩm cũ
 
@@ -74,10 +97,18 @@ document.getElementById('product-form').addEventListener('submit', async (e) => 
 
   // Hiển thị sản phẩm
   displayProducts();
+  displayProductTypes();
 
   // Xóa dữ liệu form sau khi thêm
   document.getElementById('product-form').reset();
 });
 
-// Hiển thị sản phẩm khi tải trang
+// Lắng nghe sự kiện nhập vào thanh tìm kiếm
+document.getElementById('search-input').addEventListener('input', (e) => {
+  const searchTerm = e.target.value.trim();
+  displayProducts(searchTerm);
+});
+
+// Hiển thị các loại sản phẩm và sản phẩm khi tải trang
+displayProductTypes();
 displayProducts();

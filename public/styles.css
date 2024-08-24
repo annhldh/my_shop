@@ -2,11 +2,30 @@ body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
     margin: 0;
-    padding: 20px;
+    padding-top: 60px; /* Thêm padding để tránh bị che bởi top-bar */
 }
 
 h1, h2 {
     text-align: center;
+}
+
+.top-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #FE5621;
+    padding: 10px;
+    z-index: 1000;
+    text-align: center;
+}
+
+#search-input {
+    width: 50%;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .product-form {
@@ -26,25 +45,26 @@ h1, h2 {
     max-width: 300px;
 }
 
-.product-list {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.product-table {
+    width: 80%;
+    margin: 20px auto; /* Điều chỉnh margin để căn giữa và có khoảng cách tốt hơn */
+    text-align: center;
 }
 
-.product-table {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 20px;
-    width: 80%;
+.product-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
 }
 
 .product-cell {
-    background-color: white;
+    flex: 1;
+    background-color: #f9f9f9;
+    margin: 0 10px;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    text-align: center;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Thêm shadow cho hiệu ứng nổi */
 }
 
 .product-cell img {
@@ -52,4 +72,9 @@ h1, h2 {
     height: auto;
     border-bottom: 1px solid #ddd;
     margin-bottom: 10px;
+}
+
+.product-cell p {
+    margin: 0;
+    padding: 5px 0;
 }
